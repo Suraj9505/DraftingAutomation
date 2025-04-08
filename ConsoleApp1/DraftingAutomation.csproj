@@ -23,4 +23,9 @@
     <PackageReference Include="netDxf" Version="2023.11.10" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Update="Patterns\**\*" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+
+
 </Project>

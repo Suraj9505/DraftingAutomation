@@ -13,8 +13,8 @@ namespace DraftingAutomation
     public class ColumnTop
     {
         double _widthX, _widthY, _length, _cover, _barNum, _barDia, _spaceX, _spaceY;
-        public DxfDocument _dfx;
-        public DimensionStyle _dimStyle;
+        int _horizotalbars, _verticalBars;
+        public DxfDocument _dxf;
         Vector2 _pos;
         public string _colName;
         private List<Vector2> _points = new List<Vector2>();
@@ -38,75 +38,29 @@ namespace DraftingAutomation
             Color = new AciColor(240),
         };
 
-        public ColumnTop(Vector2 pos, string colName, double widthX, double widthY, double length, double cover, double barNum, double barDia, DxfDocument dxf, DimensionStyle dimStyle)
+        public ColumnTop(Vector2 pos, string colName, double widthX, double widthY, double length, double cover, double barNum, double barDia, DxfDocument dxf)
         {
             _widthX = widthX;
             _widthY = widthY;
             _length = length;
             _cover = cover;
-            _dfx = dxf;
-            _dimStyle = dimStyle;
+            _dxf = dxf;
             _pos = pos;
             _colName = colName;
             _barNum = barNum;
             _barDia = barDia;
-            _points = new List<Vector2>
-            {
-                new Vector2(_pos.X, _pos.Y),
-                new Vector2(_pos.X + _widthX, _pos.Y),
-                new Vector2(_pos.X + _widthX, _pos.Y + _widthY),
-                new Vector2(_pos.X, _pos.Y + _widthY)
-            };
+            _points = Constants.GetRectanglePoints(_pos, _widthX, _widthY);
 
             DrawColumnTop();
             DrawBars();
+            DrawStirrups();
 
         }
 
         private void DrawColumnTop()
 
         {
-            for (int i = 0; i < _points.Count; i++)
-            {
-                if (i == _points.Count - 1)
-                {
-                    Line line = new Line(_points[i], _points[0]) { Layer = layer };
-                    _dfx.Entities.Add(line);
-                }
-                else
-                {
-                    Line line = new Line(_points[i], _points[i + 1]) { Layer = layer };
-                    _dfx.Entities.Add(line);
-                }
-            }
-
-            AlignedDimension dim = new()
-            {
-                FirstReferencePoint = new Vector2(_pos.X, _pos.Y),
-                SecondReferencePoint = new Vector2(_pos.X + _widthX, _pos.Y),
-                Style = DimensionStyle.Default
-            };
-            
-            AlignedDimension dim1 = new()
-            {
-                FirstReferencePoint = new Vector2(_pos.X + _widthX , _pos.Y),
-                SecondReferencePoint = new Vector2(_pos.X + _widthX, _pos.Y + _widthY),
-                Style = DimensionStyle.Default
-            };
-
-            dim.SetDimensionLinePosition(new Vector2(_pos.X , _pos.Y - 100)); // this sets the postion of the dimension
-            dim.Style = _dimStyle;
-
-            dim1.SetDimensionLinePosition(new Vector2(_pos.X + _widthX + 100, _pos.Y)); // this sets the postion of the dimension
-            dim1.Style = _dimStyle;
-
-            _dfx.Entities.Add(dim);
-
-            _dfx.Entities.Add(dim1);
-
-            //MText text = new MText(_colName, new Vector2(_pos.X + 150, _pos.Y - 200), 100, 20) { Layer = textLayer };
-
-            //_dfx.Entities.Add(text);
+            Rectangle.DrawNormalRectangle(_widthX, _widthY, _points, layer, _pos, true, _dxf);
         }
 
         private void DrawBars()
@@ -121,57 +75,87 @@ namespace DraftingAutomation
             { Layer = barLayer };
 
 
-            _dfx.Entities.Add(circle0);
-            _dfx.Entities.Add(circle1);
-            _dfx.Entities.Add(circle2);
-            _dfx.Entities.Add(circle3);
+            _dxf.Entities.Add(circle0);
+            _dxf.Entities.Add(circle1);
+            _dxf.Entities.Add(circle2);
+            _dxf.Entities.Add(circle3);
 
             int reaminingBars = (int)_barNum - 4;
-            int verticalBars = Convert.ToInt32(reaminingBars * (_widthY / (_widthX + _widthY))) / 2;
-            int horizontalBars = (reaminingBars - verticalBars * 2) / 2;
+            _verticalBars = Convert.ToInt32(reaminingBars * (_widthY / (_widthX + _widthY))) / 2;
+            _horizotalbars = (reaminingBars - _verticalBars * 2) / 2;
 
             double distY = _widthY - 2 * (_cover + _barDia);
             double distX = _widthX - 2 * (_cover + _barDia);
 
-            double _spaceX = (distX - (horizontalBars * _barDia)) / (horizontalBars + 1);
-            double _spaceY = (distY - (verticalBars * _barDia)) / (verticalBars + 1);
+             _spaceX = (distX - (_horizotalbars * _barDia)) / (_horizotalbars + 1);
+             _spaceY = (distY - (_verticalBars * _barDia)) / (_verticalBars + 1);
 
-            for (int i = 0; i < verticalBars; i++)
+            for (int i = 0; i < _verticalBars; i++)
             {
                 double x = _points[0].X + _cover + (_barDia / 2), y = _points[0].Y + _cover + (_barDia / 2) + (_spaceY + _barDia) * (i + 1);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dfx.Entities.Add(circle);
+                _dxf.Entities.Add(circle);
 
             }
 
-            for (int i = 0; i < verticalBars; i++)
+            for (int i = 0; i < _verticalBars; i++)
             {
                 double x = _points[1].X - _cover - (_barDia / 2), y = _points[1].Y + _cover + (_barDia / 2) + (_spaceY + _barDia) * (i + 1);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dfx.Entities.Add(circle);
+                _dxf.Entities.Add(circle);
 
             }
 
-            for (int i = 0; i < horizontalBars; i++)
+            for (int i = 0; i < _horizotalbars; i++)
             {
                 double x = _points[0].X + _cover + (_barDia / 2) + (_spaceX + _barDia) * (i + 1), y = _points[0].Y + _cover + (_barDia / 2);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dfx.Entities.Add(circle);
+                _dxf.Entities.Add(circle);
 
             }
 
-            for (int i = 0; i < horizontalBars; i++)
+            for (int i = 0; i < _horizotalbars; i++)
             {
                 double x = _points[3].X + _cover + (_barDia / 2) + (_spaceX + _barDia) * (i + 1), y = _points[3].Y - _cover - (_barDia / 2);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dfx.Entities.Add(circle);
+                _dxf.Entities.Add(circle);
 
             }
 
+        }
+
+        private void DrawStirrups()
+        {
+            double space = _cover + _barDia / 2;
+            double barRadius = _barDia / 2;
+            double stirrupsExtension = 75;
+
+            Line outer_stirrup1 = new Line(new Vector2(_points[0].X + space, _points[0].Y + _cover), new Vector2(_points[1].X - space, _points[0].Y + _cover)) { Layer = barLayer }; 
+
+            Line outer_stirrup2 = new Line(new Vector2(_points[1].X - _cover, _points[1].Y + space), new Vector2(_points[2].X - _cover, _points[2].Y - space)) { Layer = barLayer }; 
+            
+            Line outer_stirrup3 = new Line(new Vector2(_points[2].X - space, _points[2].Y - _cover), new Vector2(_points[3].X + space, _points[3].Y - _cover)) { Layer = barLayer }; 
+
+            Line outer_stirrup4 = new Line(new Vector2(_points[3].X + _cover, _points[3].Y - space), new Vector2(_points[0].X + _cover, _points[0].Y + space)) { Layer = barLayer };
+
+            Vector2 outStirrupExt1 = new Vector2();
+
+            outStirrupExt1.X = _points[3].X + _cover + barRadius * Math.Cos(45 * Math.PI / 180);
+            outStirrupExt1.Y = _points[3].Y - space + barRadius * Math.Sin(45 * Math.PI / 180);
+
+            Line outStiEx = new Line(outStirrupExt1, new Vector2(outStirrupExt1.X + stirrupsExtension, outStirrupExt1.Y + stirrupsExtension)) { Layer = barLayer };
+
+            //outStiEx.Direction = ;
+
+            _dxf.Entities.Add(outer_stirrup1);
+            _dxf.Entities.Add(outer_stirrup2);
+            _dxf.Entities.Add(outer_stirrup3);
+            _dxf.Entities.Add(outer_stirrup4);
+            _dxf.Entities.Add(outStiEx);
         }
     }
 }
