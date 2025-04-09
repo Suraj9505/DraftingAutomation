@@ -16,8 +16,8 @@ namespace DraftingAutomation
 
     public class ExcelData
     {
-        private List<double> _planPointsX = new List<double>();
-        private List<double> _planPointsY = new List<double>();
+        public static List<double> _planPointsX = new List<double>();
+        public static List<double> _planPointsY = new List<double>();
 
         DxfDocument dxf = new DxfDocument();
 
@@ -143,7 +143,7 @@ namespace DraftingAutomation
 
                 Plan.DrawFoundationLayot(pccWidthX, pccWidthY, footLoc, footWidthX, footWidthY, colLoc, colWidthX, colWidthY, dxf);
 
-                Foundation.Foundation.DrawFoundation(PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinTopX, CRStirrupsSpacing, dxf);
+                Foundation.Foundation.DrawFoundation(sheet.Cells[Constants.CRStirrups, footingCol].Value2, PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinTopX, CRStirrupsSpacing, dxf);
 
                 dxf.Save("C:\\Users\\SurajJha\\Desktop\\practice_projects\\DraftingAutomation\\Foundation.dxf");
 

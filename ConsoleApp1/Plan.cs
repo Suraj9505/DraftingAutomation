@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using DraftingAutomation.Extras;
 using netDxf;
 using netDxf.Entities;
 using netDxf.Tables;
+using static DraftingAutomation.Constants;
 
 namespace DraftingAutomation
 {
@@ -140,8 +142,9 @@ namespace DraftingAutomation
 
         public static void DrawFoundationLayot(double pccWX, double pccWY, Vector2 footLoc, double footWX, double footWY, Vector2 colLoc, double colWX, double colWY, DxfDocument dxf)
         {
+
             Rectangle.DrawRectangleWithCenter(footLoc, pccWX, pccWY, false, pccLayer, dxf);
-            Rectangle.DrawRectangleWithCenter(footLoc, footWX, footWY, true, footLayer, dxf);
+            Rectangle.DrawRectangleWithCenter(footLoc, footWX, footWY, false, footLayer, dxf);
             Rectangle.DrawRectangleWithCenter(colLoc, colWX, colWY, false, colLayer, dxf);
 
             List<Vector2> boundary =
@@ -168,30 +171,34 @@ namespace DraftingAutomation
 
             hatch.Pattern.Scale = 30;
             hatch.Pattern.Angle = 45;
-            hatch.Layer = Constants.hatchLayer; 
+            hatch.Layer = Constants.hatchLayer;
 
             dxf.Entities.Add(hatch);
+
+
+            FootingDimFromGrid.DrawFoundationFootDimension(footLoc, footWX, footWY, dxf);
+
         }
 
-        private static string GetColumnLabel(int index)
+        private static string GetColumnLabel(int gridIndex)
 
         {
 
             const int alphabetSize = 26;
             string label = "";
-            if (index >= 0)
+            if (gridIndex >= 0)
 
             {
 
-                while (index >= 0)
+                while (gridIndex >= 0)
 
                 {
 
-                    int remainder = index % alphabetSize;
+                    int remainder = gridIndex % alphabetSize;
 
                     label = (char)('A' + remainder) + label;
 
-                    index = (index / alphabetSize) - 1;
+                    gridIndex = (gridIndex / alphabetSize) - 1;
 
                 }
 

@@ -45,18 +45,13 @@ namespace DraftingAutomation
 
         public static void DrawRectangleWithCenter(Vector2 Center, double widthX, double widthY, bool dimension, Layer layer, DxfDocument dxf)
         {
-            Line line1 = new Line(new Vector2(Center.X - (widthX / 2), Center.Y - (widthY / 2)), new Vector2(Center.X + (widthX / 2), Center.Y - (widthY / 2))) { Layer = layer };
+            List <Vector2> rectVertex = Constants.GetRectanglePointsFromCenter(Center, widthX, widthY);
 
-            Line line2 = new Line(new Vector2(Center.X + (widthX / 2), Center.Y - (widthY / 2)), new Vector2(Center.X + (widthX / 2), Center.Y + (widthY / 2))) { Layer = layer };
-
-            Line line3 = new Line(new Vector2(Center.X + (widthX / 2), Center.Y + (widthY / 2)), new Vector2(Center.X - (widthX / 2), Center.Y + (widthY / 2))) { Layer = layer };
-
-            Line line4 = new Line(new Vector2(Center.X - (widthX / 2), Center.Y + (widthY / 2)), new Vector2(Center.X - (widthX / 2), Center.Y - (widthY / 2))) { Layer = layer };
-
-            dxf.Entities.Add(line1);
-            dxf.Entities.Add(line2);
-            dxf.Entities.Add(line3);
-            dxf.Entities.Add(line4);
+            foreach (Vector2 point in rectVertex)
+            {
+                Line line = new Line(point, rectVertex[(rectVertex.IndexOf(point) + 1) % rectVertex.Count]) { Layer = layer };
+                dxf.Entities.Add(line);
+            }
 
             if (dimension)
             {
