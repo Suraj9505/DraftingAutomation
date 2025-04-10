@@ -156,6 +156,7 @@ namespace DraftingAutomation
             _dxf.Entities.Add(outer_stirrup3);
             _dxf.Entities.Add(outer_stirrup4);
             _dxf.Entities.Add(outStiEx);
+            //comment
         }
     }
 }
