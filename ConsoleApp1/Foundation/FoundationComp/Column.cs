@@ -72,7 +72,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     {
                         Layer = leaderLayer,
                         Style = leaderDim,
-                        Annotation = new MText(stirrups, new Vector2(endPoint.X + 400, endPoint.Y + 150), 20)
+                        Annotation = new MText(stirrups, new Vector2(endPoint.X + 400, endPoint.Y + 150), 30)
                         {
                             Layer = leaderLayer,
                             AttachmentPoint = MTextAttachmentPoint.MiddleLeft,

@@ -11,17 +11,13 @@ namespace DraftingAutomation.Foundation.FoundationComp
 {
     public class Bars
     {
-        private static Layer layer = new Layer("verticalBarsLayer")
-        {
-            Color = AciColor.Cyan,
-        };
 
         public static void DrawBars(List<Vector2> linePoints, DxfDocument dxf)
         {
 
-            Line line1 = new Line(linePoints[0], linePoints[1]) { Layer = layer};
-            Line line2 = new Line(linePoints[0], linePoints[2]) { Layer = layer };
-            Line line3 = new Line(linePoints[2], linePoints[3]) { Layer = layer };
+            Line line1 = new Line(linePoints[0], linePoints[1]) { Layer = new Layer("verticalBarsLayer") };
+            Line line2 = new Line(linePoints[0], linePoints[2]) { Layer = new Layer("verticalBarsLayer") };
+            Line line3 = new Line(linePoints[2], linePoints[3]) { Layer = new Layer("verticalBarsLayer") };
 
             dxf.Entities.Add(line1);
             dxf.Entities.Add(line2);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DraftingAutomation.Foundation.FoundationComp;
 using netDxf;
 using netDxf.Entities;
 using netDxf.Tables;
@@ -38,7 +39,7 @@ namespace DraftingAutomation
             Color = new AciColor(240),
         };
 
-        public ColumnTop(Vector2 pos, string colName, double widthX, double widthY, double length, double cover, double barNum, double barDia, DxfDocument dxf)
+        public ColumnTop(Vector2 pos, string colName, double widthX, double widthY, double length, double cover, string colReinVertical, DxfDocument dxf)
         {
             _widthX = widthX;
             _widthY = widthY;
@@ -47,8 +48,8 @@ namespace DraftingAutomation
             _dxf = dxf;
             _pos = pos;
             _colName = colName;
-            _barNum = barNum;
-            _barDia = barDia;
+            _barNum = Constants.ExtractNumbers(colReinVertical)[0];
+            _barDia = Constants.ExtractNumbers(colReinVertical)[1];
             _points = Constants.GetRectanglePoints(_pos, _widthX, _widthY);
 
             DrawColumnTop();
@@ -74,11 +75,13 @@ namespace DraftingAutomation
             Circle circle3 = new Circle(new Vector2(_points[3].X + _barDia / 2 + _cover, _points[3].Y - _cover - _barDia / 2), _barDia / 2)
             { Layer = barLayer };
 
+            List<Circle> entities = new List<Circle>();
 
-            _dxf.Entities.Add(circle0);
-            _dxf.Entities.Add(circle1);
-            _dxf.Entities.Add(circle2);
-            _dxf.Entities.Add(circle3);
+            entities.Add(circle0);
+            entities.Add(circle0);
+            entities.Add(circle1);
+            entities.Add(circle2);
+            entities.Add(circle3);
 
             int reaminingBars = (int)_barNum - 4;
             _verticalBars = Convert.ToInt32(reaminingBars * (_widthY / (_widthX + _widthY))) / 2;
@@ -90,12 +93,13 @@ namespace DraftingAutomation
              _spaceX = (distX - (_horizotalbars * _barDia)) / (_horizotalbars + 1);
              _spaceY = (distY - (_verticalBars * _barDia)) / (_verticalBars + 1);
 
+
             for (int i = 0; i < _verticalBars; i++)
             {
                 double x = _points[0].X + _cover + (_barDia / 2), y = _points[0].Y + _cover + (_barDia / 2) + (_spaceY + _barDia) * (i + 1);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dxf.Entities.Add(circle);
+                entities.Add(circle);
 
             }
 
@@ -104,7 +108,7 @@ namespace DraftingAutomation
                 double x = _points[1].X - _cover - (_barDia / 2), y = _points[1].Y + _cover + (_barDia / 2) + (_spaceY + _barDia) * (i + 1);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dxf.Entities.Add(circle);
+                entities.Add(circle);
 
             }
 
@@ -113,7 +117,7 @@ namespace DraftingAutomation
                 double x = _points[0].X + _cover + (_barDia / 2) + (_spaceX + _barDia) * (i + 1), y = _points[0].Y + _cover + (_barDia / 2);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dxf.Entities.Add(circle);
+                entities.Add(circle);
 
             }
 
@@ -122,8 +126,20 @@ namespace DraftingAutomation
                 double x = _points[3].X + _cover + (_barDia / 2) + (_spaceX + _barDia) * (i + 1), y = _points[3].Y - _cover - (_barDia / 2);
 
                 Circle circle = new Circle(new Vector2(x, y), _barDia / 2) { Layer = barLayer };
-                _dxf.Entities.Add(circle);
+                entities.Add(circle);
 
+            }
+            foreach (var item in entities)
+            {
+                Circle hatchBoundaryCircle = new Circle(item.Center, item.Radius) { Layer = item.Layer };
+                HatchBoundaryPath hatchBoundary = new HatchBoundaryPath(new List<EntityObject> { hatchBoundaryCircle });
+
+                Hatch hatch = new Hatch(HatchPattern.Solid, new List<HatchBoundaryPath> { hatchBoundary }, true)
+                {
+                    Layer = item.Layer,
+                };
+
+                _dxf.Entities.Add(hatch);
             }
 
         }

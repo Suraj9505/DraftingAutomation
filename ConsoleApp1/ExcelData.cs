@@ -37,8 +37,8 @@ namespace DraftingAutomation
 
 
             int footingCol = 3;
-            
-            
+
+
             int planRow = 2;
             int planColX = 2;
             int planColY = 3;
@@ -53,7 +53,7 @@ namespace DraftingAutomation
 
                 if (x == null && y == null) break;
 
-                if(x != null)
+                if (x != null)
                 {
                     _planPointsX.Add(x);
                 }
@@ -61,7 +61,7 @@ namespace DraftingAutomation
                 if (y != null)
                 {
                     _planPointsY.Add(y);
-                }  
+                }
 
                 planRow++;
 
@@ -104,46 +104,29 @@ namespace DraftingAutomation
                 double footCover = sheet.Cells[Constants.footCC, footingCol].Value2;
                 double colCover = sheet.Cells[Constants.colCC, footingCol].Value2;
 
-                List<double> footingReinBotX = [];
-                List<double> footingReinBotY = [];
-                List<double> footingReinTopX = [];
-                List<double> footingReinTopY = [];
+                string footingReinBotX;
+                string footingReinBotY;
+                string footingReinTopX;
+                string footingReinTopY;
 
-                List<double> colReinVertical = [];
-                List<double> colReinStirrups = [];
+                string colReinVertical;
+                string colReinStirrups;
 
-                footingReinBotX = Constants.ExtractNumbers(sheet.Cells[Constants.FRBottomX, footingCol].Value2);
-                footingReinBotY = Constants.ExtractNumbers(sheet.Cells[Constants.FRBottomY, footingCol].Value2);
-                footingReinTopX = Constants.ExtractNumbers(sheet.Cells[Constants.FRTopX, footingCol].Value2);
-                footingReinTopY = Constants.ExtractNumbers(sheet.Cells[Constants.FRTopY, footingCol].Value2);
+                footingReinBotX = sheet.Cells[Constants.FRBottomX, footingCol].Value2;
+                footingReinBotY = sheet.Cells[Constants.FRBottomY, footingCol].Value2;
+                footingReinTopX = sheet.Cells[Constants.FRTopX, footingCol].Value2;
+                footingReinTopY = sheet.Cells[Constants.FRTopY, footingCol].Value2;
 
-                colReinVertical = Constants.ExtractNumbers(sheet.Cells[Constants.CRVertical, footingCol].Value2);
-                colReinStirrups = Constants.ExtractNumbers(sheet.Cells[Constants.CRStirrups, footingCol].Value2);
-
-
-                double FRBotXDia = footingReinBotX[0];
-                double FRBotXSpacing = footingReinBotX[1];
-                double FRBotYDia = footingReinBotY[0];
-                double FRBotYSpacing = footingReinBotY[1];
-
-                double FRTopXDia = footingReinTopX[0];
-                double FRTopXSpacing = footingReinTopX[1];
-                double FRTopYDia = footingReinTopY[0];
-                double FRTopYSpacing = footingReinTopY[1];
-
-                double CRVerticalNum = colReinVertical[0];
-                double CRVerticalDia = colReinVertical[1];
-
-                double CRStirrupsDia = colReinStirrups[0];
-                double CRStirrupsSpacing = colReinStirrups[1];
+                colReinVertical = sheet.Cells[Constants.CRVertical, footingCol].Value2;
+                colReinStirrups = sheet.Cells[Constants.CRStirrups, footingCol].Value2;
 
                 dxf.DrawingVariables.InsUnits = DrawingUnits.Millimeters;
 
-                ColumnTop colTop = new ColumnTop(ColTopStartPos, footingName, colWidthX, colWidthY, colLength, colCover, CRVerticalNum, CRVerticalDia, dxf);
+                ColumnTop colTop = new ColumnTop(ColTopStartPos, footingName, colWidthX, colWidthY, colLength, colCover, colReinVertical, dxf);
 
                 Plan.DrawFoundationLayot(pccWidthX, pccWidthY, footLoc, footWidthX, footWidthY, colLoc, colWidthX, colWidthY, dxf);
 
-                Foundation.Foundation.DrawFoundation(sheet.Cells[Constants.CRStirrups, footingCol].Value2, PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinTopX, CRStirrupsSpacing, dxf);
+                Foundation.Foundation.DrawFoundation(colReinStirrups, PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinTopX, colReinVertical, dxf);
 
                 dxf.Save("C:\\Users\\SurajJha\\Desktop\\practice_projects\\DraftingAutomation\\Foundation.dxf");
 
