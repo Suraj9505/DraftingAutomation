@@ -45,7 +45,7 @@ namespace DraftingAutomation
 
         public static void DrawRectangleWithCenter(Vector2 Center, double widthX, double widthY, bool dimension, Layer layer, DxfDocument dxf)
         {
-            List <Vector2> rectVertex = Constants.GetRectanglePointsFromCenter(Center, widthX, widthY);
+            List<Vector2> rectVertex = Constants.GetRectanglePointsFromCenter(Center, widthX, widthY);
 
             foreach (Vector2 point in rectVertex)
             {
@@ -64,9 +64,18 @@ namespace DraftingAutomation
                     FirstReferencePoint = new Vector2(pos.X, pos.Y),
                     SecondReferencePoint = new Vector2(pos.X + widthX, pos.Y),
                     Style = new DimensionStyle("GridDim"),
-                    Layer = new Layer("GridDimLayer"),
 
                 };
+
+                if (layer != null)
+
+                {
+                    dim.Layer = layer;
+                }
+                else
+                {
+                    dim.Layer = new Layer("GridDimLayer");
+                }
 
                 AlignedDimension dim1 = new()
                 {
@@ -77,7 +86,7 @@ namespace DraftingAutomation
                 };
 
                 dim.SetDimensionLinePosition(new Vector2(pos.X, pos.Y - 500)); // this sets the postion of the dimension
-               
+
 
                 dim1.SetDimensionLinePosition(new Vector2(pos.X + widthX + 500, pos.Y)); // this sets the postion of the dimension
 
@@ -94,19 +103,24 @@ namespace DraftingAutomation
             {
                 FirstReferencePoint = new Vector2(pos.X, pos.Y),
                 SecondReferencePoint = new Vector2(pos.X + widthX, pos.Y),
+                Layer = new Layer("dimensionLayer")
+                {
+                    Color = AciColor.Red
+                },
+                Style = dimStyle
             };
 
             AlignedDimension dim1 = new()
             {
                 FirstReferencePoint = new Vector2(pos.X + widthX, pos.Y),
-                SecondReferencePoint = new Vector2(pos.X + widthX, pos.Y + widthY)
+                SecondReferencePoint = new Vector2(pos.X + widthX, pos.Y + widthY),
+                Layer = new Layer("dimensionLayer"),
+                Style = dimStyle
             };
 
             dim.SetDimensionLinePosition(new Vector2(pos.X, pos.Y - 100)); // this sets the postion of the dimension
-            dim.Style = dimStyle;
 
             dim1.SetDimensionLinePosition(new Vector2(pos.X + widthX + 100, pos.Y)); // this sets the postion of the dimension
-            dim1.Style = dimStyle;
 
             dxf.Entities.Add(dim);
 

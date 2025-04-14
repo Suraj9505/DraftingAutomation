@@ -126,7 +126,7 @@ namespace DraftingAutomation
 
                 Plan.DrawFoundationLayot(pccWidthX, pccWidthY, footLoc, footWidthX, footWidthY, colLoc, colWidthX, colWidthY, dxf);
 
-                Foundation.Foundation.DrawFoundation(colReinStirrups, PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinTopX, colReinVertical, dxf);
+                Foundation.Foundation.DrawFoundation(colReinStirrups, PccStartPos, rubbleThk, pccWidthX, pccDepth, footWidthX, footingDepth, colWidthX, colLength, footCover, colCover, footingReinBotX, footingReinBotY, footingReinTopX, footingReinTopY, colReinVertical, dxf);
 
                 dxf.Save("C:\\Users\\SurajJha\\Desktop\\practice_projects\\DraftingAutomation\\Foundation.dxf");
 

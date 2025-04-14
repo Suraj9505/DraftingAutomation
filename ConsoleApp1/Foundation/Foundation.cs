@@ -13,13 +13,13 @@ namespace DraftingAutomation.Foundation
 {
     public class Foundation
     {
-        public static void DrawFoundation(string stirrups, Vector2 pos, double rubbleThk, double pccWX, double pccDepth, double footWX, double footDepth, double colWX, double colLen, double footCC, double colCC, string footBarsBtmX, string footBarsTopX, string colReinVertical, DxfDocument dxf)
+        public static void DrawFoundation(string stirrups, Vector2 pos, double rubbleThk, double pccWX, double pccDepth, double footWX, double footDepth, double colWX, double colLen, double footCC, double colCC, string footBarsBtmX, string footBarsBtmY, string footBarsTopX , string footBarsTopY, string colReinVertical, DxfDocument dxf)
         {
            
             PCC.DrawPCC(pccWX, pccDepth, pos, dxf);
 
             double stirrupSpacing = Constants.ExtractNumbers(stirrups)[1];
-            double botBarDia = Constants.ExtractNumbers(footBarsBtmX)[0];
+            double botBarDia = Constants.ExtractNumbers(footBarsBtmX)[0] * 2;
 
             Vector2 footingCenter = new();
             Vector2 columnCenter = new();
@@ -30,7 +30,7 @@ namespace DraftingAutomation.Foundation
             columnCenter.X = pos.X;
             columnCenter.Y = footingCenter.Y + footDepth / 2 + colLen / 2;
 
-            Footing.DrawFooting(footWX, footDepth, footCC, footingCenter, footBarsBtmX, footBarsTopX, dxf);
+            Footing.DrawFooting(footWX, footDepth, footCC, footingCenter, footBarsBtmX, footBarsBtmY, footBarsTopX, footBarsTopY, dxf);
 
             Column.DrawColumn(colWX, colLen, columnCenter, stirrups, dxf);
 

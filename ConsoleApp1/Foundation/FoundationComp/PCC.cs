@@ -44,9 +44,28 @@ namespace DraftingAutomation.Foundation.FoundationComp
             HatchBoundaryPath hatchBoundaryPath = new HatchBoundaryPath(lines);
 
             Hatch hatch = new Hatch(HatchPattern.Line, new List<HatchBoundaryPath> { hatchBoundaryPath }, true);
+
+            List <Vector2> leaderPoints = new List<Vector2>();
+            leaderPoints.Add(new Vector2(boundary[0].X + 200, boundary[0].Y));
+            leaderPoints.Add(new Vector2(leaderPoints[0].X, leaderPoints[0].Y - 200));
+            leaderPoints.Add(new Vector2(leaderPoints[1].X + 50, leaderPoints[1].Y));
+
+            Leader leader = new Leader(leaderPoints)
+            {
+                Layer = Column.leaderLayer,
+                Style = Column.leaderDim,
+                Annotation = new MText($"{pccDepth}THK PCC", new Vector2(leaderPoints[2].X, leaderPoints[2].Y), 30)
+                {
+                    Layer = Column.leaderLayer,
+                    AttachmentPoint = MTextAttachmentPoint.MiddleLeft,
+                    Color = AciColor.Green,
+                },
+            };
             
             hatch.Layer = pccLayer; // Set the hatch layer
             hatch.Pattern.Scale = 30; // Set the hatch pattern scale
+
+            dxf.Entities.Add(leader);
 
             dxf.Entities.Add(hatch); // Add the hatch to the document
         }

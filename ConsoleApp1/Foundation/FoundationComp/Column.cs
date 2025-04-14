@@ -17,12 +17,12 @@ namespace DraftingAutomation.Foundation.FoundationComp
             Color = new AciColor(8),
         };
 
-        private static Layer leaderLayer = new Layer("leaderLayer")
+        public static Layer leaderLayer = new Layer("leaderLayer")
         {
             Color = AciColor.Red,
         };
 
-        private static DimensionStyle leaderDim = new DimensionStyle("LeaderDimStyle")
+        public static DimensionStyle leaderDim = new DimensionStyle("LeaderDimStyle")
         {
             ArrowSize = 30,
             TextColor = AciColor.Red,
@@ -84,6 +84,18 @@ namespace DraftingAutomation.Foundation.FoundationComp
 
                     dxf.Entities.Add(stirrupDes);
                 }
+
+                AlignedDimension dimension = new AlignedDimension()
+                {
+                    FirstReferencePoint = colVertex[0],
+                    SecondReferencePoint = colVertex[3],
+                    Layer = new Layer("dimensionLayer"),
+                    Style = new DimensionStyle("MyFontStyle")
+                };
+
+                dimension.SetDimensionLinePosition(new Vector2(colVertex[0].X - 900, colVertex[3].Y));
+
+                dxf.Entities.Add(dimension);
             }
         }
     }
