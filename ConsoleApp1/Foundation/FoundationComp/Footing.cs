@@ -23,41 +23,47 @@ namespace DraftingAutomation.Foundation.FoundationComp
             Color = new AciColor(142),
         };
 
+        private static double scaleFactor = 2;
+
         public static void DrawFooting(double footWX, double footDepth, double footCC, Vector2 pos, string footBarBtmX, string footBarBtmY, string footBarTopX, string footBarTopY, DxfDocument dxf)
         {
             Rectangle.DrawRectangleWithCenter(pos, footWX, footDepth, false, footingLayer, dxf);
 
             List<Vector2> footPoints = new(Constants.GetRectanglePointsFromCenter(pos, footWX, footDepth));
 
-            double botBarRadiusX = Constants.ExtractNumbers(footBarBtmX)[0] / 2 * 1.5;
-            double topBarRadiusX = Constants.ExtractNumbers(footBarTopX)[0] / 2 * 1.5;
+            double botBarRadiusX = Constants.ExtractNumbers(footBarBtmX)[0] / 2;
+            double topBarRadiusX = Constants.ExtractNumbers(footBarTopX)[0] / 2;
 
             // Bars
             double BotBarSpacing = Constants.ExtractNumbers(footBarBtmX)[1];
             double TopBarSpacing = Constants.ExtractNumbers(footBarTopX)[1];
             double topBotSpace = 20;
 
-            double BotBarNum = Math.Floor((footWX - footCC) / BotBarSpacing);
-            double TopBarNum = Math.Floor((footWX - footCC) / TopBarSpacing);
+            double BotBarNum = Math.Round((footWX - 2 * footCC - 2 * botBarRadiusX) / BotBarSpacing);
+            double TopBarNum = Math.Round((footWX - 2 * footCC - 2 * topBarRadiusX) / TopBarSpacing);
 
-            Vector2 BotBarStart = new Vector2(footPoints[0].X + footCC + botBarRadiusX + BotBarSpacing / 2, footPoints[0].Y + topBotSpace + botBarRadiusX);
+            double newBotBarSpacing = (footWX - 2 * footCC - 2 * botBarRadiusX) / BotBarNum;
+            double newTopBarSpacing = (footWX - 2 * footCC - 2 * topBarRadiusX) / TopBarNum;
+
+
+            Vector2 BotBarStart = new Vector2(footPoints[0].X + footCC + botBarRadiusX , footPoints[0].Y + topBotSpace + botBarRadiusX);
 
             List<Vector2> botBarLinePoints = new List<Vector2>();
 
-            botBarLinePoints.Add(new Vector2(BotBarStart.X, BotBarStart.Y - botBarRadiusX));
-            botBarLinePoints.Add(new Vector2(BotBarStart.X - botBarRadiusX, BotBarStart.Y));
+            botBarLinePoints.Add(new Vector2(BotBarStart.X, BotBarStart.Y - (botBarRadiusX * scaleFactor)));
+            botBarLinePoints.Add(new Vector2(BotBarStart.X - (botBarRadiusX * scaleFactor), BotBarStart.Y));
 
-            Vector2 TopBarStart = new Vector2(footPoints[3].X + footCC + topBarRadiusX + TopBarSpacing / 2, footPoints[3].Y - topBotSpace - botBarRadiusX);
+            Vector2 TopBarStart = new Vector2(footPoints[3].X + footCC + topBarRadiusX, footPoints[3].Y - topBotSpace - botBarRadiusX);
 
             List<Vector2> topBarLinePoints = new List<Vector2>();
             double extraspace = 30;
 
-            topBarLinePoints.Add(new Vector2(TopBarStart.X - extraspace, TopBarStart.Y + topBarRadiusX));
-            topBarLinePoints.Add(new Vector2(TopBarStart.X - topBarRadiusX - extraspace, TopBarStart.Y));
+            topBarLinePoints.Add(new Vector2(TopBarStart.X - extraspace, TopBarStart.Y + (topBarRadiusX * scaleFactor)));
+            topBarLinePoints.Add(new Vector2(TopBarStart.X - (topBarRadiusX * scaleFactor) - extraspace, TopBarStart.Y));
 
-            for (int i = 0; i < BotBarNum; i++)
+            for (int i = 0; i < BotBarNum + 1; i++)
             {
-                Circle circle = new Circle(BotBarStart, botBarRadiusX)
+                Circle circle = new Circle(BotBarStart, botBarRadiusX * scaleFactor)
                 {
                     Layer = new Layer("barLayer")
                 };
@@ -73,7 +79,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     if(footBarBtmX == footBarBtmY)
                     {
                         List<Vector2> leaderPoints1 = new List<Vector2>();
-                        leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - botBarRadiusX));
+                        leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - botBarRadiusX * scaleFactor));
                         leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - 200));
                         leaderPoints1.Add(new Vector2(BotBarStart.X + 150, BotBarStart.Y - 200));
 
@@ -87,7 +93,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     else
                     {
                         List<Vector2> leaderPoints1 = new List<Vector2>();
-                        leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - botBarRadiusX));
+                        leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - botBarRadiusX * scaleFactor));
                         leaderPoints1.Add(new Vector2(BotBarStart.X + 100, BotBarStart.Y - 200));
                         leaderPoints1.Add(new Vector2(BotBarStart.X + 150, BotBarStart.Y - 200));
 
@@ -99,16 +105,16 @@ namespace DraftingAutomation.Foundation.FoundationComp
                         AngularLeader.DifferentXAndYRein(leaderPoints1, leaderPoints2, footBarBtmX, footBarBtmY, dxf);
                     }
                 }
-                BotBarStart.X += BotBarSpacing;
+                BotBarStart.X += newBotBarSpacing;
 
                 dxf.Entities.Add(hatch);
             }
-            botBarLinePoints.Add(new Vector2(BotBarStart.X - 150, BotBarStart.Y - botBarRadiusX));
-            botBarLinePoints.Add(new Vector2(BotBarStart.X - 150 + botBarRadiusX, BotBarStart.Y));
+            botBarLinePoints.Add(new Vector2(BotBarStart.X - newBotBarSpacing, BotBarStart.Y - (botBarRadiusX * scaleFactor)));
+            botBarLinePoints.Add(new Vector2(BotBarStart.X - newBotBarSpacing + (botBarRadiusX * scaleFactor) , BotBarStart.Y));
 
-            for (int i = 0; i < TopBarNum; i++)
+            for (int i = 0; i < TopBarNum + 1; i++)
             {
-                Circle circle = new Circle(TopBarStart, topBarRadiusX)
+                Circle circle = new Circle(TopBarStart, topBarRadiusX * scaleFactor)
                 {
                     Layer = new Layer("barLayer")
                 };
@@ -124,7 +130,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     if(footBarTopX == footBarTopY)
                     {
                         List<Vector2> leaderPoints1 = new List<Vector2>();
-                        leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + botBarRadiusX));
+                        leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + botBarRadiusX * scaleFactor));
                         leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + 200));
                         leaderPoints1.Add(new Vector2(TopBarStart.X + 150, TopBarStart.Y + 200));
 
@@ -137,7 +143,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     else
                     {
                         List<Vector2> leaderPoints1 = new List<Vector2>();
-                        leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + botBarRadiusX));
+                        leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + botBarRadiusX * scaleFactor));
                         leaderPoints1.Add(new Vector2(TopBarStart.X + 100, TopBarStart.Y + 200));
                         leaderPoints1.Add(new Vector2(TopBarStart.X + 150, TopBarStart.Y + 200));
 
@@ -151,12 +157,12 @@ namespace DraftingAutomation.Foundation.FoundationComp
 
                 }
 
-                TopBarStart.X += TopBarSpacing;
+                TopBarStart.X += newTopBarSpacing;
                 //dxf.Entities.Add(circle);
                 dxf.Entities.Add(hatch);
             }
-            topBarLinePoints.Add(new Vector2(TopBarStart.X - 150 + extraspace, TopBarStart.Y + topBarRadiusX));
-            topBarLinePoints.Add(new Vector2(TopBarStart.X - 150 + topBarRadiusX + extraspace, TopBarStart.Y));
+            topBarLinePoints.Add(new Vector2(TopBarStart.X - newTopBarSpacing + extraspace, TopBarStart.Y + (topBarRadiusX * scaleFactor)));
+            topBarLinePoints.Add(new Vector2(TopBarStart.X - newTopBarSpacing + (topBarRadiusX* scaleFactor) + extraspace, TopBarStart.Y));
 
 
             //Lines to show bars in Y axis
@@ -192,22 +198,22 @@ namespace DraftingAutomation.Foundation.FoundationComp
 
             //Arcs
 
-            Arc arc1 = new Arc(new Vector2(botBarLinePoints[0].X, botBarLinePoints[1].Y), botBarRadiusX, 180, 270)
+            Arc arc1 = new Arc(new Vector2(botBarLinePoints[0].X, botBarLinePoints[1].Y), botBarRadiusX * scaleFactor, 180, 270)
             {
                 Layer = layer,
             };
 
-            Arc arc2 = new Arc(new Vector2(botBarLinePoints[2].X, botBarLinePoints[1].Y), botBarRadiusX, 270, 0)
+            Arc arc2 = new Arc(new Vector2(botBarLinePoints[2].X, botBarLinePoints[1].Y), botBarRadiusX * scaleFactor, 270, 0)
             {
                 Layer = layer,
             };
 
-            Arc arc3 = new Arc(new Vector2(topBarLinePoints[0].X, topBarLinePoints[1].Y), topBarRadiusX, 90, 180)
+            Arc arc3 = new Arc(new Vector2(topBarLinePoints[0].X, topBarLinePoints[1].Y), topBarRadiusX * scaleFactor, 90, 180)
             {
                 Layer = layer
             };
 
-            Arc arc4 = new Arc(new Vector2(topBarLinePoints[2].X, topBarLinePoints[1].Y), topBarRadiusX, 0, 90)
+            Arc arc4 = new Arc(new Vector2(topBarLinePoints[2].X, topBarLinePoints[1].Y), topBarRadiusX * scaleFactor, 0, 90)
             {
                 Layer = layer
             };

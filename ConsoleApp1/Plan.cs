@@ -15,6 +15,7 @@ namespace DraftingAutomation
         private const double HorizontalEndExtension = 3000;
         private const int lineTypeScale = 200;
         private const double DimensionOffset = 3000; // Adjust as needed for dimension line spacing
+        private const double adjustmentVal = 600;
 
         private static Layer pccLayer = new Layer("PccLayer")
         {
@@ -61,9 +62,9 @@ namespace DraftingAutomation
                     fullVertical.LinetypeScale = lineTypeScale;
                     dxf.Entities.Add(fullVertical);
 
-                    Circle circle = new Circle(new Vector2(planPointsX[i], planPointsY[0] - VerticalExtension - 600), 600) { Layer = textLayer };
+                    Circle circle = new Circle(new Vector2(planPointsX[i], planPointsY[0] - VerticalExtension - adjustmentVal), adjustmentVal) { Layer = textLayer };
 
-                    Text mText = new Text(GetColumnLabel(i), new Vector2(planPointsX[i] - 200, planPointsY[0] - VerticalExtension - 900), 600)
+                    Text mText = new Text(GetColumnLabel(i), new Vector2(planPointsX[i] - 200, planPointsY[0] - VerticalExtension - 900), adjustmentVal)
                     {
                         Layer = textLayer,
                         Alignment = TextAlignment.MiddleCenter,
@@ -107,9 +108,9 @@ namespace DraftingAutomation
                     fullHorizontal.LinetypeScale = lineTypeScale;
                     dxf.Entities.Add(fullHorizontal);
 
-                    Circle circle = new Circle(new Vector2(planPointsX[0] - HorizontalStartExtension - 600, planPointsY[j]), 600) { Layer = textLayer };
+                    Circle circle = new Circle(new Vector2(planPointsX[0] - HorizontalStartExtension - adjustmentVal, planPointsY[j]), adjustmentVal) { Layer = textLayer };
 
-                    Text mText = new Text((j + 1).ToString(), new Vector2(planPointsX[0] - HorizontalStartExtension - 600 - 200, planPointsY[j] - 300), 600)
+                    Text mText = new Text((j + 1).ToString(), new Vector2(planPointsX[0] - HorizontalStartExtension - adjustmentVal - 200, planPointsY[j] - 300), adjustmentVal)
                     {
                         Layer = textLayer,
                         Alignment = TextAlignment.MiddleCenter,
@@ -128,7 +129,7 @@ namespace DraftingAutomation
                                 FirstReferencePoint = new Vector2(planPointsX[i], planPointsY[j]),
                                 SecondReferencePoint = new Vector2(planPointsX[i + 1], planPointsY[j]),
                                 Layer = gridDimLayer,
-                                Style = new DimensionStyle("GridDim")
+                                Style = new DimensionStyle("GridDim"),
                             };
                             dim.SetDimensionLinePosition(new Vector2(planPointsX[i], planPointsY[j] + DimensionOffset));
                             dxf.Entities.Add(dim);

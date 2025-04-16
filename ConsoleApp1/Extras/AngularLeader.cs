@@ -12,25 +12,20 @@ namespace DraftingAutomation.Extras
 {
     public class AngularLeader
     {
-        private static DimensionStyle leaderDim1 = new DimensionStyle("leaderDim1")
+        public static DimensionStyle leaderDim1 = new DimensionStyle("leaderDim1")
         {
             TextColor = AciColor.Red,
             LeaderArrow = DimensionArrowhead.OriginIndicator,
-            ArrowSize = 30,
+            ArrowSize = 35,
         };
 
         public static void SameXAndYRein(List<Vector2> leaderLines1, List<Vector2> leaderLines2, string desc, DxfDocument dxf)
         {
-            Leader leader = new Leader(leaderLines2)
-            {
-                Layer = Column.leaderLayer,
-                Style = leaderDim1,
-            };
 
             Leader leader1 = new Leader(leaderLines1)
             {
                 Layer = Column.leaderLayer,
-                Style = Column.leaderDim,
+                Style = Constants.leaderDim,
                 Annotation = new MText(desc, new Vector2(leaderLines1[2].X, leaderLines1[2].Y), 30)
                 {
                     Layer = Column.leaderLayer,
@@ -39,6 +34,11 @@ namespace DraftingAutomation.Extras
                 },
             };
 
+            Leader leader = new Leader(leaderLines2)
+            {
+                Layer = Column.leaderLayer,
+                Style = leaderDim1,
+            };
 
             dxf.Entities.Add(leader);
             dxf.Entities.Add(leader1);
@@ -49,7 +49,7 @@ namespace DraftingAutomation.Extras
             Leader leader = new Leader(leaderLines1)
             {
                 Layer = Column.leaderLayer,
-                Style = Column.leaderDim,
+                Style = Constants.leaderDim,
                 Annotation = new MText(descX, leaderLines1[2], 30)
                 {
                     Layer = Column.leaderLayer,

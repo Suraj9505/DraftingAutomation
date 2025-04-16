@@ -11,15 +11,7 @@ namespace DraftingAutomation
 {
     public class Rectangle
     {
-        private static DimensionStyle dimensionStyle = new DimensionStyle("MyFontStyle")
-        {
-            TextHeight = 40,
-            ArrowSize = 20,
-            LengthPrecision = 0,
-            ExtLineExtend = 20,
-            ExtLineOffset = 20,
-            //DimLengthUnits = LinearUnitType.Architectural,
-        };
+        private static DimensionStyle dimensionStyle = Constants.dimensionStyle;
 
         public static void DrawNormalRectangle(double widthX, double widthY, List<Vector2> points, Layer layer, Vector2 pos, bool dimension, DxfDocument dxf)
         {

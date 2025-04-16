@@ -18,6 +18,8 @@ namespace DraftingAutomation.Foundation
            
             PCC.DrawPCC(pccWX, pccDepth, pos, dxf);
 
+            double dimOffset = 150;
+
             double stirrupSpacing = Constants.ExtractNumbers(stirrups)[1];
             double botBarDia = Constants.ExtractNumbers(footBarsBtmX)[0] * 2;
 
@@ -34,22 +36,23 @@ namespace DraftingAutomation.Foundation
 
             Column.DrawColumn(colWX, colLen, columnCenter, stirrups, dxf);
 
-            List <Vector2> footingPoints = Constants.GetRectanglePointsFromCenter(columnCenter, colWX, colLen);
+            List <Vector2> columnPoints = Constants.GetRectanglePointsFromCenter(columnCenter, colWX, colLen);
+            List <Vector2> footingPoints = Constants.GetRectanglePointsFromCenter(footingCenter, footWX, footDepth);
 
             List<Vector2> bar1 = new List<Vector2>
             {
-                new Vector2(footingPoints[3].X + colCC, footingPoints[3].Y - 70),
-                new Vector2(footingPoints[2].X - 100, footingPoints[2].Y - 70),
-                new Vector2(footingPoints[3].X + colCC, footingPoints[3].Y + 20 + botBarDia - colLen - footDepth),
-                new Vector2(footingPoints[3].X - 400, footingPoints[3].Y + 20 + botBarDia - colLen - footDepth)
+                new Vector2(columnPoints[3].X + colCC, columnPoints[3].Y - 70),
+                new Vector2(columnPoints[2].X - 100, columnPoints[2].Y - 70),
+                new Vector2(columnPoints[3].X + colCC, columnPoints[3].Y + 20 + botBarDia - colLen - footDepth),
+                new Vector2(columnPoints[3].X - 400, columnPoints[3].Y + 20 + botBarDia - colLen - footDepth)
             };
 
             List<Vector2> bar2 = new List<Vector2>
             {
-                new Vector2(footingPoints[2].X - colCC, footingPoints[2].Y - colCC),
-                new Vector2(footingPoints[3].X + 100, footingPoints[3].Y - colCC),
-                new Vector2(footingPoints[2].X - colCC, footingPoints[2].Y + 20 + botBarDia - colLen - footDepth),
-                new Vector2(footingPoints[2].X + 400, footingPoints[3].Y + 20 + botBarDia - colLen - footDepth)
+                new Vector2(columnPoints[2].X - colCC, columnPoints[2].Y - colCC),
+                new Vector2(columnPoints[3].X + 100, columnPoints[3].Y - colCC),
+                new Vector2(columnPoints[2].X - colCC, columnPoints[2].Y + 20 + botBarDia - colLen - footDepth),
+                new Vector2(columnPoints[2].X + 400, columnPoints[3].Y + 20 + botBarDia - colLen - footDepth)
             };
 
             Bars.DrawBars(bar1, dxf);
@@ -72,6 +75,31 @@ namespace DraftingAutomation.Foundation
                 },
 
             };
+
+            AlignedDimension dimension = new AlignedDimension()
+            {
+                FirstReferencePoint = footingPoints[3],
+                SecondReferencePoint = new Vector2(footingPoints[3].X, footingPoints[3].Y + colLen),
+                Layer = new Layer("dimensionLayer"),
+                Style = Constants.dimensionStyle,
+                
+            };
+            
+            AlignedDimension dimension1 = new AlignedDimension()
+            {
+                FirstReferencePoint = footingPoints[3],
+                SecondReferencePoint = new Vector2(footingPoints[0].X, footingPoints[0].Y),
+                Layer = new Layer("dimensionLayer"),
+                Style = Constants.dimensionStyle,
+                
+            };
+
+            dimension.SetDimensionLinePosition(new Vector2(footingPoints[3].X - dimOffset, footingPoints[3].Y));
+            
+            dimension1.SetDimensionLinePosition(new Vector2(footingPoints[3].X - dimOffset, footingPoints[2].Y ));
+
+            dxf.Entities.Add(dimension);
+            dxf.Entities.Add(dimension1);
 
             dxf.Entities.Add(verticalBarsLeader);
 

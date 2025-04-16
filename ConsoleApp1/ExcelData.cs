@@ -10,6 +10,7 @@ using netDxf.Tables;
 using netDxf.Units;
 using DraftingAutomation.Foundation.FoundationComp;
 using DraftingAutomation.Foundation;
+using DraftingAutomation.ColumnDetail;
 
 namespace DraftingAutomation
 {
@@ -18,6 +19,8 @@ namespace DraftingAutomation
     {
         public static List<double> _planPointsX = new List<double>();
         public static List<double> _planPointsY = new List<double>();
+
+        public static string colRein, colStirrups;
 
         DxfDocument dxf = new DxfDocument();
 
@@ -121,6 +124,9 @@ namespace DraftingAutomation
                 colReinStirrups = sheet.Cells[Constants.CRStirrups, footingCol].Value2;
 
                 dxf.DrawingVariables.InsUnits = DrawingUnits.Millimeters;
+
+                colRein = colReinVertical;
+                colStirrups = colReinStirrups;
 
                 ColumnTop colTop = new ColumnTop(ColTopStartPos, footingName, colWidthX, colWidthY, colLength, colCover, colReinVertical, dxf);
 

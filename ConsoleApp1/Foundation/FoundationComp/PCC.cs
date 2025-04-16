@@ -53,7 +53,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
             Leader leader = new Leader(leaderPoints)
             {
                 Layer = Column.leaderLayer,
-                Style = Column.leaderDim,
+                Style = Constants.leaderDim,
                 Annotation = new MText($"{pccDepth}THK PCC", new Vector2(leaderPoints[2].X, leaderPoints[2].Y), 30)
                 {
                     Layer = Column.leaderLayer,

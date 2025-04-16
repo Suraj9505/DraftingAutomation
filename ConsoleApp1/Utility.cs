@@ -31,6 +31,22 @@ namespace DraftingAutomation
             ExtLineOffset = 100,
         };
 
+        public static DimensionStyle dimensionStyle = new DimensionStyle("MyFontStyle")
+        {
+            TextHeight = 40,
+            ArrowSize = 60,
+            LengthPrecision = 0,
+            ExtLineExtend = 20,
+            ExtLineOffset = 20,
+            //DimLengthUnits = LinearUnitType.Architectural,
+        };
+
+        public static DimensionStyle leaderDim = new DimensionStyle("LeaderDimStyle")
+        {
+            ArrowSize = 40,
+            TextColor = AciColor.Red,
+        };
+
         public static Layer hatchLayer = new Layer("HatchLayer")
         {
             Color = new AciColor(136),

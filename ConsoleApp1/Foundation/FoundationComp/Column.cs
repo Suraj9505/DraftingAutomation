@@ -22,12 +22,6 @@ namespace DraftingAutomation.Foundation.FoundationComp
             Color = AciColor.Red,
         };
 
-        public static DimensionStyle leaderDim = new DimensionStyle("LeaderDimStyle")
-        {
-            ArrowSize = 30,
-            TextColor = AciColor.Red,
-        };
-
 
 
         public static void DrawColumn(double colWX, double colLen, Vector2 pos, string stirrups, DxfDocument dxf)
@@ -71,7 +65,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     Leader stirrupDes = new Leader( leaderPoints)
                     {
                         Layer = leaderLayer,
-                        Style = leaderDim,
+                        Style = Constants.leaderDim,
                         Annotation = new MText(stirrups, new Vector2(endPoint.X + 400, endPoint.Y + 150), 30)
                         {
                             Layer = leaderLayer,
@@ -85,17 +79,7 @@ namespace DraftingAutomation.Foundation.FoundationComp
                     dxf.Entities.Add(stirrupDes);
                 }
 
-                AlignedDimension dimension = new AlignedDimension()
-                {
-                    FirstReferencePoint = colVertex[0],
-                    SecondReferencePoint = colVertex[3],
-                    Layer = new Layer("dimensionLayer"),
-                    Style = new DimensionStyle("MyFontStyle")
-                };
-
-                dimension.SetDimensionLinePosition(new Vector2(colVertex[0].X - 900, colVertex[3].Y));
-
-                dxf.Entities.Add(dimension);
+                
             }
         }
     }
